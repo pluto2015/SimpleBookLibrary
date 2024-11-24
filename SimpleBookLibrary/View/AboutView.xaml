@@ -1,0 +1,28 @@
+﻿<mah:MetroWindow  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" 
+                  x:Class="SimpleBookLibrary.View.AboutView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SimpleBookLibrary.View" 
+        xmlns:viewmodel="clr-namespace:SimpleBookLibrary.ViewModel" 
+        d:DataContext="{d:DesignInstance Type=viewmodel:AboutViewModel}"
+                  WindowStartupLocation="CenterScreen"
+        mc:Ignorable="d" ShowMaxRestoreButton="False" ShowMinButton="False"
+        Title="关于" Height="216" Width="400">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Label Content="{Binding CopyRight}" Grid.Row="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+        <Label Content="{Binding Version}" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+        <Label Content="150735@163.com" Grid.Row="2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+    </Grid>
+</mah:MetroWindow>

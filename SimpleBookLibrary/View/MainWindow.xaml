@@ -1,0 +1,279 @@
+﻿<mah:MetroWindow  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" 
+                  x:Class="SimpleBookLibrary.View.MainWindow"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                xmlns:local="clr-namespace:SimpleBookLibrary.View" 
+                  xmlns:viewmodel="clr-namespace:SimpleBookLibrary.ViewModel" 
+                  d:DataContext="{d:DesignInstance Type=viewmodel:MainWindowViewModel}"
+                  mc:Ignorable="d" WindowState="Maximized"
+        Title="图书管理" Height="768" Width="1024">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0">
+            <MenuItem Header="文件">
+                <MenuItem Header="导入图书"/>
+                <MenuItem Header="导入借阅记录"/>
+                <MenuItem Header="下载导入图书模板"/>
+                <MenuItem Header="下载导入借阅记录模板"/>
+            </MenuItem>
+            <MenuItem Header="录入" Command="{Binding AddBookCommand}"/>
+            <MenuItem Header="借阅" Command="{Binding BorrowCommand}"/>
+            <MenuItem Header="关于" Command="{Binding AboutCommand}"/>
+        </Menu>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="3"/>
+                <ColumnDefinition Width="500"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="110"/>
+                <RowDefinition/>
+                <RowDefinition Height="3"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <GroupBox Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3"  Margin="3">
+                <GroupBox.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="50"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="搜索条件" Grid.Column="0" Foreground="White"/>
+                        <TextBlock Text="搜索" Grid.Column="2" Foreground="White">
+                            <TextBlock.InputBindings>
+                                <MouseBinding MouseAction="LeftClick" Command="{Binding SearchCommand}"/>
+                            </TextBlock.InputBindings>
+                        </TextBlock>
+                    </Grid>
+                </GroupBox.Header>
+                <ScrollViewer>
+                    <WrapPanel Grid.Row="0" Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal" Margin="3">
+                            <Label Content="书名" VerticalContentAlignment="Center"/>
+                            <TextBox Width="200" Text="{Binding SearchBookName, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="3">
+                            <Label Content="作者" VerticalContentAlignment="Center"/>
+                            <TextBox Width="100" Text="{Binding SearchAuthor, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="3">
+                            <Label Content="科室" VerticalContentAlignment="Center"/>
+                            <TextBox  Width="100" Text="{Binding SearchDepartment, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="3">
+                            <Label Content="借阅人" VerticalContentAlignment="Center"/>
+                            <TextBox  Width="100" Text="{Binding SearchBorrower, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="3">
+                            <Label Content="购买日期" VerticalContentAlignment="Center"/>
+                            <DatePicker SelectedDate="{Binding SearchBuyStartDate}"/>
+                            <Label VerticalContentAlignment="Center">-</Label>
+                            <DatePicker SelectedDate="{Binding SearchBuyEndDate}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="3">
+                            <Label Content="借阅日期" VerticalContentAlignment="Center"/>
+                            <DatePicker SelectedDate="{Binding SearchBorrowStartDate}"/>
+                            <Label VerticalContentAlignment="Center">-</Label>
+                            <DatePicker SelectedDate="{Binding SearchBorrowEndDate}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="3">
+                            <Label Content="归还日期" VerticalContentAlignment="Center"/>
+                            <DatePicker SelectedDate="{Binding SearchReturnStartDate}"/>
+                            <Label VerticalContentAlignment="Center">-</Label>
+                            <DatePicker SelectedDate="{Binding SearchReturnEndDate}"/>
+                        </StackPanel>
+                    </WrapPanel>
+                </ScrollViewer>
+            </GroupBox>
+
+            <GroupBox Header="搜索到的图书" Grid.Column="0" Grid.Row="1"  Margin="3" Grid.RowSpan="3">
+                <DataGrid ItemsSource="{Binding SearchedBooks}"  CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"
+                          SelectionMode="Single" SelectedValue="{Binding SelectedBook}"
+                          GridLinesVisibility="All">
+                    <DataGrid.RowHeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}, Path=Index}"/>
+                        </DataTemplate>
+                    </DataGrid.RowHeaderTemplate>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="编号">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding Code}" VerticalContentAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="书名">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding Name}" VerticalContentAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="作者">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding Author}" VerticalContentAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="出版社">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding Publisher}" VerticalContentAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="价格">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding Price}" VerticalContentAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="购买日期">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding PurchaseDateTime}" VerticalContentAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="数量">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding Count}" VerticalContentAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="科室">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding Department.Name}" VerticalContentAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="备注">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Remark}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="操作">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="编辑" Command="{Binding DataContext.EditBookCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                            CommandParameter="{Binding Id}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </GroupBox>
+            
+            <GridSplitter Grid.Column="1" Grid.Row="1" Grid.RowSpan="3"/>
+
+            <GroupBox Header="借阅记录-未归还" Grid.Column="2" Grid.Row="1"  Margin="3">
+                <DataGrid ItemsSource="{Binding BorrowHistoriesNotReturn}"  
+                          CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"
+                          GridLinesVisibility="All">
+                    <DataGrid.RowHeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}, Path=Index}"/>
+                        </DataTemplate>
+                    </DataGrid.RowHeaderTemplate>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="借阅时间">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding BorrowDateTime}" VerticalContentAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="归还时间">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding ReturnDateTime}" VerticalContentAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="借阅人">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding Borrower.Name}" VerticalContentAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="数量">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding BorrowCount}" VerticalContentAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="操作">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="归还" Command="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}"
+                                            CommandParameter="{Binding Id}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </GroupBox>
+
+            <GridSplitter Grid.Column="2" Grid.Row="2" />
+            
+            <GroupBox Header="借阅记录-已归还" Grid.Column="2" Grid.Row="3"  Margin="3">
+                <DataGrid ItemsSource="{Binding BorrowHistoriesReturned}"  
+                          CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"
+                          GridLinesVisibility="All">
+                    <DataGrid.RowHeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}, Path=Index}"/>
+                        </DataTemplate>
+                    </DataGrid.RowHeaderTemplate>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="借阅时间">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding BorrowDateTime}" VerticalContentAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="归还时间">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding ReturnDateTime}" VerticalContentAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="借阅人">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding Borrower.Name}" VerticalContentAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="数量">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding BorrowCount}" VerticalContentAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                    </DataGrid.Columns>
+                </DataGrid>
+            </GroupBox>
+        </Grid>
+    </Grid>
+</mah:MetroWindow>
