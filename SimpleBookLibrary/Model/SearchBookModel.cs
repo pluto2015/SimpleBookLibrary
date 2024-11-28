@@ -1,65 +1,66 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using SimpleBookLibrary.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SimpleBookLibrary.Model
 {
-    public partial class BookModel:BaseModel
+    /// <summary>
+    /// 搜索条件
+    /// </summary>
+    public partial class SearchBookModel:ObservableObject
     {
         /// <summary>
-        /// 编号
+        /// 搜索书名
         /// </summary>
         [ObservableProperty]
-        private string _code;
+        private string _searchBookName;
         /// <summary>
-        /// 书名
+        /// 搜索作者名
         /// </summary>
         [ObservableProperty]
-        private string _name;
+        private string _searchAuthor;
         /// <summary>
-        /// 出版社
+        /// 搜索科室
         /// </summary>
         [ObservableProperty]
-        private string _publisher;
+        private string _searchDepartment;
         /// <summary>
-        /// 作者
+        /// 搜索借阅人
         /// </summary>
         [ObservableProperty]
-        private string _author;
+        private string _searchBorrower;
         /// <summary>
-        /// 价格
+        /// 搜索购买时间-开始
         /// </summary>
         [ObservableProperty]
-        private double? _price;
+        private DateTime? _searchBuyStartDate;
         /// <summary>
-        /// 购买日期，时间戳utc
+        /// 搜索购买时间-截至
         /// </summary>
         [ObservableProperty]
-        private DateTime? _purchaseDateTime;
+        private DateTime? _searchBuyEndDate;
         /// <summary>
-        /// 数量
+        /// 搜索借阅时间-开始
         /// </summary>
         [ObservableProperty]
-        private int _count;
+        private DateTime? _searchBorrowStartDate;
         /// <summary>
-        /// 科室id
+        /// 搜索借阅时间-截至
         /// </summary>
         [ObservableProperty]
-        private string _departmentId;
+        private DateTime? _searchBorrowEndDate;
         /// <summary>
-        /// 科室
+        /// 搜索归还时间-开始
         /// </summary>
         [ObservableProperty]
-        private string _department;
+        private DateTime? _searchReturnStartDate;
         /// <summary>
-        /// 备注
+        /// 搜索归还时间-截至
         /// </summary>
         [ObservableProperty]
-        private string _remark;
+        private DateTime? _searchReturnEndDate;
     }
 }

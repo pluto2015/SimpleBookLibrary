@@ -11,9 +11,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media.Animation;
 
 namespace SimpleBookLibrary.ViewModel
 {
@@ -21,55 +23,10 @@ namespace SimpleBookLibrary.ViewModel
     {
         #region prop
         /// <summary>
-        /// 搜索书名
+        /// 搜索条件
         /// </summary>
         [ObservableProperty]
-        private string _searchBookName;
-        /// <summary>
-        /// 搜索作者名
-        /// </summary>
-        [ObservableProperty]
-        private string _searchAuthor;
-        /// <summary>
-        /// 搜索科室
-        /// </summary>
-        [ObservableProperty]
-        private string _searchDepartment;
-        /// <summary>
-        /// 搜索借阅人
-        /// </summary>
-        [ObservableProperty]
-        private string _searchBorrower;
-        /// <summary>
-        /// 搜索购买时间-开始
-        /// </summary>
-        [ObservableProperty]
-        private DateTime? _searchBuyStartDate;
-        /// <summary>
-        /// 搜索购买时间-截至
-        /// </summary>
-        [ObservableProperty]
-        private DateTime? _searchBuyEndDate;
-        /// <summary>
-        /// 搜索借阅时间-开始
-        /// </summary>
-        [ObservableProperty]
-        private DateTime? _searchBorrowStartDate;
-        /// <summary>
-        /// 搜索借阅时间-截至
-        /// </summary>
-        [ObservableProperty]
-        private DateTime? _searchBorrowEndDate;
-        /// <summary>
-        /// 搜索归还时间-开始
-        /// </summary>
-        [ObservableProperty]
-        private DateTime? _searchReturnStartDate;
-        /// <summary>
-        /// 搜索归还时间-截至
-        /// </summary>
-        [ObservableProperty]
-        private DateTime? _searchReturnEndDate;
+        private SearchBookModel _searchBook = new SearchBookModel();
         /// <summary>
         /// 搜索到的图书
         /// </summary>
@@ -103,7 +60,7 @@ namespace SimpleBookLibrary.ViewModel
         public RelayCommand SearchCommand { set; get; }
         public RelayCommand AboutCommand { set; get; }
         public RelayCommand AddBookCommand { set; get; }
-        public RelayCommand<string> EditBookCommand { set; get; }
+        public RelayCommand<BookModel> EditBookCommand { set; get; }
         #endregion
         protected readonly ILogger<MainWindowViewModel> _logger;
         protected readonly IBookService _bookService;
@@ -125,16 +82,20 @@ namespace SimpleBookLibrary.ViewModel
             SearchCommand = new RelayCommand(OnSearchCommand);
             AboutCommand = new RelayCommand(OnAboutCommand);
             AddBookCommand = new RelayCommand(OnAddBookCommand);
-            EditBookCommand = new RelayCommand<string>(OnEditBookCommand);
+            EditBookCommand = new RelayCommand<BookModel>(OnEditBookCommand);
         }
 
-        private void OnEditBookCommand(string? obj)
+        private void OnEditBookCommand(BookModel? book)
         {
             try
             {
                 var dlg = new AddBookView();
+                var vm = dlg.DataContext as AddBookViewModel;
+                vm.Book = book;
+                vm.Title = "编辑图书";
                 if (dlg.ShowDialog().Value)
                 {
+                    _bookService.EditBook(book);
                     OnSearchCommand();
                 }
             }
@@ -150,8 +111,16 @@ namespace SimpleBookLibrary.ViewModel
             try
             {
                 var dlg = new AddBookView();
+                var vm = dlg.DataContext as AddBookViewModel;
+                vm.Title = "新增图书";
+                vm.Information = "注意!按照如下逻辑新增:\n" +
+                    "1.按照书名去重,书名相同的认为是同一本书.\n" +
+                    "2.涉及英文和拼音的不区分大小写。\n" +
+                    "3.数据库里已有的叠加数量，没有的新增";
                 if (dlg.ShowDialog().Value)
                 {
+                    _bookService.AddBook(vm.Book.Name, vm.Book.Author, vm.Book.Department, vm.Book.Price, vm.Book.PurchaseDateTime,
+                        vm.Book.Count, vm.Book.Code, vm.Book.Remark, vm.Book.Publisher);
                     OnSearchCommand();
                 }
             }
@@ -180,8 +149,7 @@ namespace SimpleBookLibrary.ViewModel
         {
             try
             {
-                var books = _bookService.SearchBooks(SearchBookName,SearchAuthor,SearchDepartment,SearchBorrower,SearchBuyStartDate,SearchBuyEndDate,
-                    SearchBorrowStartDate, SearchBorrowEndDate,SearchReturnStartDate,SearchReturnEndDate);
+                var books = _bookService.SearchBooks(SearchBook);
                 SearchedBooks.Clear();
                 foreach (var book in books)
                 {

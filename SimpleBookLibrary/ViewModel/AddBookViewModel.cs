@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SimpleBookLibrary.Model;
 using SimpleBookLibrary.Service;
 using System;
 using System.Collections.Generic;
@@ -16,50 +17,20 @@ namespace SimpleBookLibrary.ViewModel
     {
         #region prop
         /// <summary>
-        /// 书名
+        /// 标题
         /// </summary>
         [ObservableProperty]
-        private string _bookName;
+        private string _title;
         /// <summary>
-        /// 书号
+        /// 书
         /// </summary>
         [ObservableProperty]
-        private string _code;
+        private BookModel _book = new BookModel();
         /// <summary>
-        /// 作者
+        /// 提示信息
         /// </summary>
         [ObservableProperty]
-        private string _author;
-        /// <summary>
-        /// 价格
-        /// </summary>
-        [ObservableProperty]
-        private double? _price;
-        /// <summary>
-        /// 数量
-        /// </summary>
-        [ObservableProperty]
-        private int _count;
-        /// <summary>
-        /// 科室
-        /// </summary>
-        [ObservableProperty]
-        private string _department;
-        /// <summary>
-        /// 备注
-        /// </summary>
-        [ObservableProperty]
-        private string _remark;
-        /// <summary>
-        /// 购买时间
-        /// </summary>
-        [ObservableProperty]
-        private DateTime? _buyTime;
-        /// <summary>
-        /// 出版社
-        /// </summary>
-        [ObservableProperty]
-        private string _publisher;
+        private string _information;
         #endregion
         #region command
         public RelayCommand<Window> OkCommand { get; set; }
@@ -68,10 +39,12 @@ namespace SimpleBookLibrary.ViewModel
 
         protected readonly ILogger<AddBookViewModel> _logger;
         protected readonly IBookService _bookService;
+        protected readonly IDepartmentService _departmentService;
         public AddBookViewModel() {
 
             _logger = App.Current.ServiceProvider.GetService<ILogger<AddBookViewModel>>();
             _bookService = App.Current.ServiceProvider.GetService<IBookService>();
+            _departmentService = App.Current.ServiceProvider.GetService<IDepartmentService>();
 
             InitCommand();
         }
@@ -97,12 +70,12 @@ namespace SimpleBookLibrary.ViewModel
         {
             try
             {
-                if(string.IsNullOrEmpty(BookName))
+                if(string.IsNullOrEmpty(Book.Name))
                 {
                     MessageBox.Show("书名不能为空","提示");
                     return;
                 }
-                if (Count <= 0)
+                if (Book.Count <= 0)
                 {
                     MessageBox.Show("数量需要大于0","提示");
                     return;
@@ -111,8 +84,16 @@ namespace SimpleBookLibrary.ViewModel
                 {
                     return;
                 }
-                _bookService.AddBook(BookName, Author, Department, Price, BuyTime, Count, Code, Remark,Publisher);
-
+                if(string.IsNullOrEmpty(Book.Department))
+                {
+                    Book.DepartmentId = null;
+                }
+                else
+                {
+                   var department = _departmentService.GetDepartmentByName(Book.Department);
+                    Book.DepartmentId = department.Id;
+                }
+                
                 window.DialogResult = true;
                 window.Close();
             }

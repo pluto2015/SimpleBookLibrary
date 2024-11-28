@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleBookLibrary.Data;
 using SimpleBookLibrary.Model;
@@ -13,17 +14,18 @@ namespace SimpleBookLibrary.Service
 {
     public class BookService : IBookService
     {
-        protected readonly DataContext _dc;
         protected readonly IDepartmentService _departmentService;
+        protected readonly IMapper _mapper;
         public BookService()
         {
-            _dc = App.Current.ServiceProvider.GetService<DataContext>();
             _departmentService = App.Current.ServiceProvider.GetService<IDepartmentService>();
+            _mapper = App.Current.ServiceProvider.GetService<IMapper>();
         }
 
         public void AddBook(string bookName, string author, string department, double? price, DateTime? buyTime, int count, string code,string remark,string publisher)
         {
-            var entity = _dc.Books.FirstOrDefault(x=>x.IsDeleted == false && x.Name.ToLower().Equals(bookName.Trim().ToLower()));
+            using var dc = new DataContext();
+            var entity = dc.Books.FirstOrDefault(x=>x.IsDeleted == false && x.Name.ToLower().Equals(bookName.Trim().ToLower()));
             var departmentEntity = _departmentService.GetDepartmentByName(department);
             if (entity != null)
             {
@@ -54,7 +56,7 @@ namespace SimpleBookLibrary.Service
                     entity.Publisher = publisher.Trim();
                 }
                 entity.Price = price;
-                _dc.Books.Update(entity);
+                dc.Books.Update(entity);
             }else
             {
                 entity = new BookEntity
@@ -72,81 +74,91 @@ namespace SimpleBookLibrary.Service
                     PurchaseDateTime = buyTime == null? null : ((DateTimeOffset)(TimeZoneInfo.ConvertTimeToUtc(buyTime.Value))).ToUnixTimeMilliseconds(),
                     Remark = remark
                 };
-                _dc.Books.Add(entity);
+                dc.Books.Add(entity);
             }
-            _dc.SaveChanges();
+            dc.SaveChanges();
+        }
+
+        public void EditBook(BookModel book)
+        {
+            using var dc = new DataContext();
+            var entity = _mapper.Map<BookEntity>(book);
+            entity.Updated = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            dc.Books.Update(entity);
+            dc.SaveChanges();
         }
 
         public List<string> GetBookNames()
         {
-            return _dc.Books.Select(book => book.Name).ToList();
+            using var dc = new DataContext();
+            return dc.Books.Select(book => book.Name).ToList();
         }
 
-        public List<BookEntity> SearchBooks(string bookName, string author, string department, string borrower, DateTime? buyTimeStart, DateTime? buyTimeEnd, 
-            DateTime? borrowTimeStart, DateTime? borrowTimeEnd, DateTime? returnTimeStart, DateTime? returnTimeEnd)
+        public List<BookEntity> SearchBooks(SearchBookModel searchBook)
         {
-            var fileter = _dc.Books
+            using var dc = new DataContext();
+            var fileter = dc.Books
                 .Include(x => x.Department)
                 .Where(x => x.IsDeleted == false);
-            if (!string.IsNullOrEmpty(bookName))
+            if (!string.IsNullOrEmpty(searchBook.SearchBookName))
             {
-                fileter = fileter.Where(x => x.Name.ToLower().Contains(bookName.Trim().ToLower()));
+                fileter = fileter.Where(x => x.Name.ToLower().Contains(searchBook.SearchBookName.Trim().ToLower()));
             }
-            if (!string.IsNullOrEmpty(author)) 
+            if (!string.IsNullOrEmpty(searchBook.SearchAuthor)) 
             {
-                fileter = fileter.Where(x => x.Author.ToLower().Contains(author.Trim().ToLower()));
+                fileter = fileter.Where(x => x.Author.ToLower().Contains(searchBook.SearchAuthor.Trim().ToLower()));
             }
-            if (!string.IsNullOrEmpty(department))
+            if (!string.IsNullOrEmpty(searchBook.SearchDepartment))
             {
-                fileter = fileter.Where(x => x.Department != null && x.Department.Name.ToLower().Contains(department.Trim().ToLower()));
+                fileter = fileter.Where(x => x.Department != null && x.Department.Name.ToLower().Contains(searchBook.SearchDepartment.Trim().ToLower()));
             }
-            if (!string.IsNullOrEmpty(borrower))
+            if (!string.IsNullOrEmpty(searchBook.SearchBorrower))
             {
-                var books =_dc.BorrowHistory.Where(x => x.Borrower != null && x.Borrower.Name.ToLower().Contains(borrower.Trim().ToLower()))
+                var books =dc.BorrowHistory.Where(x => x.Borrower != null && x.Borrower.Name.ToLower().Contains(searchBook.SearchBorrower.Trim().ToLower()))
                    .DistinctBy(x =>x.Book.Name).Select(x=>x.Book.Name.ToLower())
                    .ToList();
                 fileter = fileter.Where(x => books.Contains(x.Name.ToLower()));
             }
-            if (buyTimeStart != null || buyTimeEnd != null)
+            if (searchBook.SearchBuyStartDate != null || searchBook.SearchBuyEndDate != null)
             {
-                if(buyTimeStart != null)
+                if(searchBook.SearchBuyStartDate != null)
                 {
-                    DateTimeOffset dateTimeOffset = TimeZoneInfo.ConvertTimeToUtc(buyTimeStart.Value);
+                    DateTimeOffset dateTimeOffset = TimeZoneInfo.ConvertTimeToUtc(searchBook.SearchBuyStartDate.Value);
                     fileter = fileter.Where(x => x.PurchaseDateTime != null && x.PurchaseDateTime >= dateTimeOffset.ToUnixTimeMilliseconds());
                 }
-                if (buyTimeEnd != null)
+                if (searchBook.SearchBuyEndDate != null)
                 {
-                    DateTimeOffset dateTimeOffset = TimeZoneInfo.ConvertTimeToUtc(buyTimeEnd.Value);
+                    DateTimeOffset dateTimeOffset = TimeZoneInfo.ConvertTimeToUtc(searchBook.SearchBuyEndDate.Value);
                     fileter = fileter.Where(x => x.PurchaseDateTime != null && x.PurchaseDateTime <= dateTimeOffset.ToUnixTimeMilliseconds());
                 }
             }
-            if (borrowTimeStart != null || borrowTimeEnd != null)
+            if (searchBook.SearchBorrowStartDate != null || searchBook.SearchBorrowEndDate != null)
             {
-                var filter1 = _dc.BorrowHistory.Where(x => x.IsDeleted == false);
-                if (borrowTimeStart != null)
+                var filter1 = dc.BorrowHistory.Where(x => x.IsDeleted == false);
+                if (searchBook.SearchBorrowStartDate != null)
                 {
-                    DateTimeOffset dateTimeOffset = TimeZoneInfo.ConvertTimeToUtc(borrowTimeStart.Value);
+                    DateTimeOffset dateTimeOffset = TimeZoneInfo.ConvertTimeToUtc(searchBook.SearchBorrowStartDate.Value);
                     filter1 = filter1.Where(x => x.BorrowDateTime >= dateTimeOffset.ToUnixTimeMilliseconds());
                 }
-                if (borrowTimeEnd != null)
+                if (searchBook.SearchBorrowEndDate != null)
                 {
-                    DateTimeOffset dateTimeOffset = TimeZoneInfo.ConvertTimeToUtc(borrowTimeEnd.Value);
+                    DateTimeOffset dateTimeOffset = TimeZoneInfo.ConvertTimeToUtc(searchBook.SearchBorrowEndDate.Value);
                     filter1 = filter1.Where(x => x.BorrowDateTime <= dateTimeOffset.ToUnixTimeMilliseconds());
                 }
                 var books = filter1.DistinctBy(x=>x.Book.Name).Select(x=>x.Book.Name.ToLower()).ToList();
                 fileter = fileter.Where(x => books.Contains(x.Name.ToLower()));
             }
-            if (returnTimeStart != null || returnTimeEnd != null)
+            if (searchBook.SearchReturnStartDate != null || searchBook.SearchReturnEndDate != null)
             {
-                var filter1 = _dc.BorrowHistory.Where(x => x.IsDeleted == false);
-                if (returnTimeStart != null)
+                var filter1 = dc.BorrowHistory.Where(x => x.IsDeleted == false);
+                if (searchBook.SearchReturnStartDate != null)
                 {
-                    DateTimeOffset dateTimeOffset = TimeZoneInfo.ConvertTimeToUtc(returnTimeStart.Value);
+                    DateTimeOffset dateTimeOffset = TimeZoneInfo.ConvertTimeToUtc(searchBook.SearchReturnStartDate.Value);
                     filter1 = filter1.Where(x => x.ReturnDateTime!=null && x.ReturnDateTime.Value >= dateTimeOffset.ToUnixTimeMilliseconds());
                 }
-                if (returnTimeEnd != null)
+                if (searchBook.SearchReturnEndDate != null)
                 {
-                    DateTimeOffset dateTimeOffset = TimeZoneInfo.ConvertTimeToUtc(returnTimeEnd.Value);
+                    DateTimeOffset dateTimeOffset = TimeZoneInfo.ConvertTimeToUtc(searchBook.SearchReturnEndDate.Value);
                     filter1 = filter1.Where(x => x.ReturnDateTime!=null && x.ReturnDateTime.Value <= dateTimeOffset.ToUnixTimeMilliseconds());
                 }
                 var books = filter1.DistinctBy(x => x.Book.Name).Select(x => x.Book.Name.ToLower()).ToList();

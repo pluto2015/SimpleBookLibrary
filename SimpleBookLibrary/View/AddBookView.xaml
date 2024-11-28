@@ -8,7 +8,7 @@
                   d:DataContext="{d:DesignInstance Type=viewmodel:AddBookViewModel}"
                   mc:Ignorable="d" ShowCloseButton="False" ShowMaxRestoreButton="False" ShowMinButton="False"
                   WindowStartupLocation="CenterScreen"
-        Title="添加图书" Height="600" Width="600">
+        Title="{Binding Title}" Height="600" Width="600">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100"/>
@@ -27,38 +27,33 @@
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
         <Label Content="*书名:" Grid.Row="0" Grid.Column="0" VerticalContentAlignment="Center"/>
-        <TextBox Text="{Binding BookName, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.Column="1" VerticalContentAlignment="Center" Margin="3"/>
+        <TextBox Text="{Binding Book.Name, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.Column="1" VerticalContentAlignment="Center" Margin="3"/>
 
         <Label Content="编号:" Grid.Row="0" Grid.Column="2" VerticalContentAlignment="Center"/>
-        <TextBox Text="{Binding Code, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.Column="3" VerticalContentAlignment="Center" Margin="3"/>
+        <TextBox Text="{Binding Book.Code, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.Column="3" VerticalContentAlignment="Center" Margin="3"/>
 
         <Label Content="作者:" Grid.Row="1" Grid.Column="0" VerticalContentAlignment="Center"/>
-        <TextBox Text="{Binding Author, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1" VerticalContentAlignment="Center" Margin="3"/>
+        <TextBox Text="{Binding Book.Author, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1" VerticalContentAlignment="Center" Margin="3"/>
 
         <Label Content="出版社:" Grid.Row="2" Grid.Column="2" VerticalContentAlignment="Center"/>
-        <TextBox Text="{Binding Publisher, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="3" VerticalContentAlignment="Center" Margin="3"/>
+        <TextBox Text="{Binding Book.Publisher, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="3" VerticalContentAlignment="Center" Margin="3"/>
 
         <Label Content="价格:" Grid.Row="1" Grid.Column="2" VerticalContentAlignment="Center"/>
-        <TextBox Text="{Binding Price, UpdateSourceTrigger=PropertyChanged,StringFormat={}{0:0.00}}" Grid.Row="1" Grid.Column="3" VerticalContentAlignment="Center" Margin="3"/>
+        <TextBox Text="{Binding Book.Price, UpdateSourceTrigger=PropertyChanged,StringFormat={}{0:0.00}}" Grid.Row="1" Grid.Column="3" VerticalContentAlignment="Center" Margin="3"/>
 
         <Label Content="购买日期:" Grid.Row="2" Grid.Column="0" VerticalContentAlignment="Center"/>
-        <DatePicker SelectedDate="{Binding BuyTime, UpdateSourceTrigger=PropertyChanged}"  Grid.Row="2" Grid.Column="1" Margin="3"/>
+        <DatePicker SelectedDate="{Binding Book.PurchaseDateTime, UpdateSourceTrigger=PropertyChanged}"  Grid.Row="2" Grid.Column="1" Margin="3"/>
 
         <Label Content="*数量:" Grid.Row="3" Grid.Column="2" VerticalContentAlignment="Center"/>
-        <TextBox Text="{Binding Count, UpdateSourceTrigger=PropertyChanged}" Grid.Row="3" Grid.Column="3" VerticalContentAlignment="Center" Margin="3"/>
+        <TextBox Text="{Binding Book.Count, UpdateSourceTrigger=PropertyChanged}" Grid.Row="3" Grid.Column="3" VerticalContentAlignment="Center" Margin="3"/>
 
         <Label Content="科室:" Grid.Row="3" Grid.Column="0" VerticalContentAlignment="Center"/>
-        <TextBox Text="{Binding Department, UpdateSourceTrigger=PropertyChanged}" Grid.Row="3" Grid.Column="1" VerticalContentAlignment="Center" Margin="3"/>
+        <TextBox Text="{Binding Book.Department, UpdateSourceTrigger=PropertyChanged}" Grid.Row="3" Grid.Column="1" VerticalContentAlignment="Center" Margin="3"/>
 
         <Label Content="备注:" Grid.Row="4" Grid.Column="0"  VerticalContentAlignment="Center"/>
-        <TextBox Text="{Binding Remark, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" AcceptsReturn="True"  Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" Margin="3"/>
+        <TextBox Text="{Binding Book.Remark, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" AcceptsReturn="True"  Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" Margin="3"/>
 
-        <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="3">
-            <Label Foreground="Red">注意!按照如下逻辑新增:</Label>
-            <Label Foreground="Red">1.按照书名去重,书名相同的认为是同一本书.</Label>
-            <Label Foreground="Red">2.涉及英文和拼音的不区分大小写。</Label>
-            <Label Foreground="Red">3.数据库里已有的叠加数量，没有的新增。</Label>
-        </StackPanel>
+        <TextBlock Text="{Binding Information}" Foreground="Red" TextWrapping="Wrap" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="4" Margin="3"/>
 
         <UniformGrid Rows="1" Columns="2" Grid.Row="6" Grid.ColumnSpan="4" HorizontalAlignment="Center">
             <Button Content="确定" Command="{Binding OkCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Margin="3" Width="80"/>

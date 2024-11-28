@@ -57,37 +57,37 @@
                     <WrapPanel Grid.Row="0" Orientation="Horizontal">
                         <StackPanel Orientation="Horizontal" Margin="3">
                             <Label Content="书名" VerticalContentAlignment="Center"/>
-                            <TextBox Width="200" Text="{Binding SearchBookName, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox Width="200" Text="{Binding SearchBook.SearchBookName, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="3">
                             <Label Content="作者" VerticalContentAlignment="Center"/>
-                            <TextBox Width="100" Text="{Binding SearchAuthor, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox Width="100" Text="{Binding SearchBook.SearchAuthor, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="3">
                             <Label Content="科室" VerticalContentAlignment="Center"/>
-                            <TextBox  Width="100" Text="{Binding SearchDepartment, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox  Width="100" Text="{Binding SearchBook.SearchDepartment, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="3">
                             <Label Content="借阅人" VerticalContentAlignment="Center"/>
-                            <TextBox  Width="100" Text="{Binding SearchBorrower, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox  Width="100" Text="{Binding SearchBook.SearchBorrower, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="3">
                             <Label Content="购买日期" VerticalContentAlignment="Center"/>
-                            <DatePicker SelectedDate="{Binding SearchBuyStartDate}"/>
+                            <DatePicker SelectedDate="{Binding SearchBook.SearchBuyStartDate}"/>
                             <Label VerticalContentAlignment="Center">-</Label>
-                            <DatePicker SelectedDate="{Binding SearchBuyEndDate}"/>
+                            <DatePicker SelectedDate="{Binding SearchBook.SearchBuyEndDate}"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="3">
                             <Label Content="借阅日期" VerticalContentAlignment="Center"/>
-                            <DatePicker SelectedDate="{Binding SearchBorrowStartDate}"/>
+                            <DatePicker SelectedDate="{Binding SearchBook.SearchBorrowStartDate}"/>
                             <Label VerticalContentAlignment="Center">-</Label>
-                            <DatePicker SelectedDate="{Binding SearchBorrowEndDate}"/>
+                            <DatePicker SelectedDate="{Binding SearchBook.SearchBorrowEndDate}"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="3">
                             <Label Content="归还日期" VerticalContentAlignment="Center"/>
-                            <DatePicker SelectedDate="{Binding SearchReturnStartDate}"/>
+                            <DatePicker SelectedDate="{Binding SearchBook.SearchReturnStartDate}"/>
                             <Label VerticalContentAlignment="Center">-</Label>
-                            <DatePicker SelectedDate="{Binding SearchReturnEndDate}"/>
+                            <DatePicker SelectedDate="{Binding SearchBook.SearchReturnEndDate}"/>
                         </StackPanel>
                     </WrapPanel>
                 </ScrollViewer>
@@ -155,7 +155,7 @@
                         <DataGridTemplateColumn Header="科室">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Label Content="{Binding Department.Name}" VerticalContentAlignment="Center"/>
+                                    <Label Content="{Binding Department}" VerticalContentAlignment="Center"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -170,7 +170,7 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Content="编辑" Command="{Binding DataContext.EditBookCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                            CommandParameter="{Binding Id}"/>
+                                            CommandParameter="{Binding}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>

@@ -10,17 +10,16 @@ namespace SimpleBookLibrary.Service
 {
     public class DepartmentService : IDepartmentService
     {
-        protected readonly DataContext _dc;
         public DepartmentService() { 
-            _dc = App.Current.ServiceProvider.GetService<DataContext>();
         }
         public DepartmentEntity GetDepartmentByName(string name)
         {
-            if(string.IsNullOrEmpty(name))
+            using var dc = new DataContext();
+            if (string.IsNullOrEmpty(name))
             {
                 return null;
             }
-            var entity = _dc.Department.FirstOrDefault(x =>x.IsDeleted == false && x.Name.ToLower().Equals(name.Trim().ToLower()));
+            var entity = dc.Department.FirstOrDefault(x =>x.IsDeleted == false && x.Name.ToLower().Equals(name.Trim().ToLower()));
             if (entity == null)
             {
                 entity = new DepartmentEntity {
@@ -29,8 +28,8 @@ namespace SimpleBookLibrary.Service
                     Created = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                     IsDeleted = false,
                 };
-                _dc.Department.Add(entity);
-                _dc.SaveChanges();
+                dc.Department.Add(entity);
+                dc.SaveChanges();
             }
 
             return entity;

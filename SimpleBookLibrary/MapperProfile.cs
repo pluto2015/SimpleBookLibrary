@@ -17,22 +17,34 @@ namespace SimpleBookLibrary
                 .ForMember(x => x.Updated,opt => opt.ConvertUsing(new DateTimeToTimestampNull(),y=>y.Updated));
 
             CreateMap<BookEntity,BookModel>()
-                .ForMember(x=>x.PurchaseDateTime,opt=>opt.ConvertUsing(new TimestampToDateTimeNull(),y=> y.PurchaseDateTime));
+                .IncludeBase<BaseEntity,BaseModel>()
+                .ForMember(x=>x.PurchaseDateTime,opt=>opt.ConvertUsing(new TimestampToDateTimeNull(),y=> y.PurchaseDateTime))
+                .ForMember(x=>x.Department,opt=>opt.MapFrom(y=>(y.Department == null? null:y.Department.Name)));
             CreateMap<BookModel,BookEntity>()
-                .ForMember(x => x.PurchaseDateTime, opt => opt.ConvertUsing(new DateTimeToTimestampNull(), y => y.PurchaseDateTime));
+                .IncludeBase<BaseModel,BaseEntity>()
+                .ForMember(x => x.PurchaseDateTime, opt => opt.ConvertUsing(new DateTimeToTimestampNull(), y => y.PurchaseDateTime))
+                .ForMember(x=>x.Department,opt=>opt.Ignore());
 
-            CreateMap<BorrowerEntity, BorrowerModel>();
-            CreateMap<BorrowerModel, BorrowerEntity>();
+            CreateMap<BorrowerEntity, BorrowerModel>()
+                .IncludeBase<BaseEntity, BaseModel>();
+            CreateMap<BorrowerModel, BorrowerEntity>()
+                .IncludeBase<BaseModel, BaseEntity>();
 
             CreateMap<BorrowHistoryEntity, BorrowHistoryModel>()
+                .IncludeBase<BaseEntity, BaseModel>()
                 .ForMember(x => x.BorrowDateTime, opt => opt.ConvertUsing(new TimestampToDateTime(), y => y.BorrowDateTime))
-                .ForMember(x => x.ReturnDateTime, opt => opt.ConvertUsing(new TimestampToDateTimeNull(), y => y.ReturnDateTime));
+                .ForMember(x => x.ReturnDateTime, opt => opt.ConvertUsing(new TimestampToDateTimeNull(), y => y.ReturnDateTime))
+                .ForMember(x=>x.Borrower,opt=>opt.MapFrom(y=>(y.Borrower == null ?null:y.Borrower.Name)));
             CreateMap<BorrowHistoryModel, BorrowHistoryEntity>()
+                .IncludeBase<BaseModel, BaseEntity>()
                 .ForMember(x => x.BorrowDateTime, opt => opt.ConvertUsing(new DateTimeToTimestamp(), y => y.BorrowDateTime))
-                .ForMember(x => x.ReturnDateTime, opt => opt.ConvertUsing(new DateTimeToTimestampNull(), y => y.ReturnDateTime));
+                .ForMember(x => x.ReturnDateTime, opt => opt.ConvertUsing(new DateTimeToTimestampNull(), y => y.ReturnDateTime))
+                .ForMember(x => x.Borrower, opt => opt.Ignore());
 
-            CreateMap<DepartmentEntity, DepartmentModel>();
-            CreateMap<DepartmentModel, DepartmentEntity>();
+            CreateMap<DepartmentEntity, DepartmentModel>()
+                .IncludeBase<BaseEntity, BaseModel>();
+            CreateMap<DepartmentModel, DepartmentEntity>()
+                .IncludeBase<BaseModel, BaseEntity>();
         }
     }
 }

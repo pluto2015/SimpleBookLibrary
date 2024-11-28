@@ -18,19 +18,9 @@ namespace SimpleBookLibrary.Service
         /// <summary>
         /// 按条件搜索图书
         /// </summary>
-        /// <param name="bookName">书名</param>
-        /// <param name="author">作者</param>
-        /// <param name="department">科室</param>
-        /// <param name="borrower">借阅人</param>
-        /// <param name="buyTimeStart">购买时间开始</param>
-        /// <param name="buyTimeEnd">购买时间截至</param>
-        /// <param name="borrowTimeStart">借阅时间开始</param>
-        /// <param name="borrowTimeEnd">借阅时间截止</param>
-        /// <param name="returnTimeStart">归还时间开始</param>
-        /// <param name="returnTimeEnd">归还时间截止</param>
+        /// <param name="searchBook">搜索条件</param>
         /// <returns>搜索到的图书</returns>
-        List<BookEntity> SearchBooks(string bookName,string author,string department,string borrower,DateTime? buyTimeStart,DateTime? buyTimeEnd,
-            DateTime? borrowTimeStart,DateTime? borrowTimeEnd,DateTime? returnTimeStart,DateTime? returnTimeEnd);
+        List<BookEntity> SearchBooks(SearchBookModel searchBook);
         /// <summary>
         /// 添加书籍
         /// </summary>
@@ -42,5 +32,10 @@ namespace SimpleBookLibrary.Service
         /// <param name="count">数量</param>
         /// <param name="code">书号</param>
         void AddBook(string bookName, string author, string department,double? price,DateTime? buyTime,int count,string code, string remark, string publisher);
+        /// <summary>
+        /// 编辑图书
+        /// </summary>
+        /// <param name="book"></param>
+        void EditBook(BookModel book);
     }
 }

@@ -11,15 +11,14 @@ namespace SimpleBookLibrary.Service
 {
     public class BorrowHistoryService : IBorrowHistoryService
     {
-        protected readonly DataContext _dc;
         public BorrowHistoryService()
         {
-            _dc = App.Current.ServiceProvider.GetService<DataContext>();
         }
 
         public List<BorrowHistoryEntity> SearchBorrowHistory(string bookName)
         {
-            return _dc.BorrowHistory.Include(x => x.Borrower)
+            using var dc = new DataContext();
+            return dc.BorrowHistory.Include(x => x.Borrower)
                 .Include(x => x.Book)
                 .Where(x => x.Book.Name.ToLower().Equals(bookName.ToLower()))
                 .OrderByDescending(x=>x.ReturnDateTime)

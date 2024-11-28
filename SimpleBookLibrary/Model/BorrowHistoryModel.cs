@@ -20,7 +20,7 @@ namespace SimpleBookLibrary.Model
         /// 图书
         /// </summary>
         [ObservableProperty]
-        private BookEntity _book;
+        private BookModel _book;
         /// <summary>
         /// 借阅时间
         /// </summary>
@@ -32,7 +32,7 @@ namespace SimpleBookLibrary.Model
         /// 借阅人
         /// </summary>
         [ObservableProperty]
-        private BorrowerEntity _borrower;
+        private string _borrower;
         /// <summary>
         /// 归还时间
         /// </summary>

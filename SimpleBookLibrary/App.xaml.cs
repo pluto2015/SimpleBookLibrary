@@ -36,7 +36,6 @@ namespace SimpleBookLibrary
         private static IServiceProvider ConfigureServices()
         {
             var services = new ServiceCollection();
-            services.AddDbContext<DataContext>();
             services.AddLogging(loggingBuilder =>
             {
                 loggingBuilder.ClearProviders();

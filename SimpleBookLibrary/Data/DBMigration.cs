@@ -18,7 +18,7 @@ namespace SimpleBookLibrary.Data
         /// </summary>
         public static void Migrate()
         {
-            var dc = App.Current.ServiceProvider.GetService<DataContext>();
+            using var dc = new DataContext();
             dc.Database.Migrate();
         }
     }
