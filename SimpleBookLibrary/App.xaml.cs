@@ -50,6 +50,7 @@ namespace SimpleBookLibrary
             services.AddSingleton<IBookService,BookService>();
             services.AddSingleton<IBorrowHistoryService,BorrowHistoryService>();
             services.AddSingleton<IDepartmentService,DepartmentService>();
+            services.AddSingleton<IBorrowerService,BorrowerService>();
 
             return services.BuildServiceProvider();
         }

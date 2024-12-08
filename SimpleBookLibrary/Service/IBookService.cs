@@ -37,5 +37,11 @@ namespace SimpleBookLibrary.Service
         /// </summary>
         /// <param name="book"></param>
         void EditBook(BookModel book);
+        /// <summary>
+        /// 通过名称获取图书
+        /// </summary>
+        /// <param name="name">书名</param>
+        /// <returns>没有匹配的图书返回null</returns>
+        BookEntity GetBookByName(string name);
     }
 }

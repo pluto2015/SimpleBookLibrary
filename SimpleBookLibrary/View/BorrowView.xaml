@@ -5,7 +5,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimpleBookLibrary.View" 
-                  xmlns:viewmodel="clr-namespace:SimpleBookLibrary.ViewModel" 
+        xmlns:viewmodel="clr-namespace:SimpleBookLibrary.ViewModel" 
+        xmlns:searchCombox="clr-namespace:SearchComboBox;assembly=SearchComboBox" xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
                   d:DataContext="{d:DesignInstance Type=viewmodel:BorrowViewModel}" WindowStartupLocation="CenterScreen"
         mc:Ignorable="d" ShowCloseButton="False" ShowMaxRestoreButton="False" ShowMinButton="False"
         Title="借阅" Height="333" Width="238">
@@ -22,19 +23,35 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Label Content="书名:" Grid.Column="0" VerticalContentAlignment="Center"/>
-        <ComboBox IsTextSearchEnabled="True" Grid.Column="1" Margin="3">
-            <ComboBoxItem Content="1"/>
-            <ComboBoxItem Content="2"/>
-            <ComboBoxItem Content="3"/>
-            <ComboBoxItem Content="4"/>
-            <ComboBoxItem Content="5"/>
+        <ComboBox ItemsSource="{Binding Books}" Grid.Column="1" Margin="3"
+                  IsEditable="True" IsTextSearchEnabled="False"
+                  DisplayMemberPath="Name" Text="{Binding BookStr, UpdateSourceTrigger=PropertyChanged}"
+                  IsDropDownOpen="{Binding IsBookNameDropDown}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="KeyUp">
+                    <i:InvokeCommandAction Command="{Binding SearchBookCommand}" 
+                                           CommandParameter="{Binding Path=Text, 
+                        RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
         </ComboBox>
 
         <Label Content="借阅人:" Grid.Column="0" Grid.Row="1" VerticalContentAlignment="Center"/>
-        <TextBox Text="" Grid.Column="1" Grid.Row="1" Margin="3"/>
+        <ComboBox ItemsSource="{Binding Borrowers}"
+                  IsEditable="True" IsTextSearchEnabled="False" Grid.Column="1" Grid.Row="1" Margin="3"
+                  DisplayMemberPath="Name" Text="{Binding BorrowerStr, UpdateSourceTrigger=PropertyChanged}"
+                  IsDropDownOpen="{Binding IsBorrowerDropDown}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="KeyUp">
+                    <i:InvokeCommandAction Command="{Binding SearchBorrowerCommand}" 
+                               CommandParameter="{Binding Path=Text, 
+                RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </ComboBox>
 
         <Label Content="数量:" Grid.Column="0" Grid.Row="2" VerticalContentAlignment="Center"/>
-        <TextBox Text="" Grid.Column="1" Grid.Row="2" Margin="3"/>
+        <TextBox Text="{Binding Count}" Grid.Column="1" Grid.Row="2" Margin="3"/>
 
         <UniformGrid Columns="2" Rows="1" Grid.Row="4" Grid.ColumnSpan="2" HorizontalAlignment="Center">
             <Button Content="保存" Margin="3" Command="{Binding SaveCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Width="60"/>

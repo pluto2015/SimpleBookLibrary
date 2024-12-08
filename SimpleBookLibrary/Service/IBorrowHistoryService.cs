@@ -19,6 +19,12 @@ namespace SimpleBookLibrary.Service
         /// <param name="bookName">书名</param>
         /// <returns>借阅记录</returns>
         List<BorrowHistoryEntity> SearchBorrowHistory(string bookName);
-
+        /// <summary>
+        /// 添加借阅历史
+        /// </summary>
+        /// <param name="bookId">图书id</param>
+        /// <param name="borrowerId">借阅者id</param>
+        /// <param name="count">借阅数量</param>
+        void AddBorrowHistory(string bookId, string borrowerId, int count);
     }
 }

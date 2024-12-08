@@ -26,5 +26,10 @@ namespace SimpleBookLibrary.View
             InitializeComponent();
             DataContext = new BorrowViewModel();
         }
+
+        private void ComboBox_book_KeyUp(object sender, KeyEventArgs e)
+        {
+
+        }
     }
 }

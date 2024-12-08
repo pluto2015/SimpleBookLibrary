@@ -88,6 +88,13 @@ namespace SimpleBookLibrary.Service
             dc.SaveChanges();
         }
 
+        public BookEntity GetBookByName(string name)
+        {
+            using var dc = new DataContext();
+            var entity = dc.Books.Where(x=>x.IsDeleted==false && x.Name.ToLower().Equals(name.ToLower())).FirstOrDefault();
+            return entity;
+        }
+
         public List<string> GetBookNames()
         {
             using var dc = new DataContext();
@@ -167,5 +174,6 @@ namespace SimpleBookLibrary.Service
 
             return  fileter.ToList();
         }
+
     }
 }

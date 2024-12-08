@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using NLog.LayoutRenderers.Wrappers;
 using SimpleBookLibrary.Model;
 using SimpleBookLibrary.Service;
@@ -167,7 +168,10 @@ namespace SimpleBookLibrary.ViewModel
         private void OnBorrowCommand()
         {
             var dlg = new BorrowView();
-            dlg.ShowDialog();
+            if(dlg.ShowDialog().Value == true)
+            {
+                OnBookSelected(SelectedBook);
+            }
         }
 
         private void OnBookSelected(BookModel book)
